@@ -1,0 +1,19 @@
+<%-
+  ppn   = num_cores.blank? ? 28 : num_cores.to_i
+  props = case node_type
+          when "hugemem"
+            ":ppn=48"
+          else
+            ":ppn=#{ppn}"
+          end
+-%>
+---
+batch_connect:
+  template: "basic"
+script:
+  <%- if node_type == "debug" -%>
+  queue_name: "debug"
+  <%- end -%>
+  native:
+    resources:
+      nodes: "1<%= props %>"

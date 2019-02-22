@@ -1,0 +1,10 @@
+---
+name: Galaxy Server
+category: Interactive Apps
+subcategory: Servers
+role: batch_connect
+description: |
+  This app will launch [Galaxy] on the [Owens cluster].
+
+  [Galaxy Server]: https://galaxyproject.org/
+  [Owens cluster]: https://www.osc.edu/resources/technical_support/supercomputers/owens

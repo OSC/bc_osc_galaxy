@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+# Load the required environment
+
+setup_env () {
+  # Define Path fot Galaxy
+  if [[ -z "${GALAXY_PATH}" ]]; then
+    GALAXY_PATH="${HOME}/ondemand/dev/bc_osc_galaxy/galaxy"
+  fi
+  echo "GALAXY_PATH is: '${GALAXY_PATH}'"
+  LOCAL_GALAXY_DIRECTORY="${HOME}/.galaxy"
+  echo "LOCAL_GALAXY_DIRECTORY is: '${LOCAL_GALAXY_DIRECTORY}'"
+  if [ -d "$LOCAL_GALAXY_DIRECTORY" ]; then
+    if [ -s "${LOCAL_GALAXY_DIRECTORY}/database/universe.sqlite" ]; then
+      echo "Use local sqlite file"
+    else
+      echo "copy default galaxy database file"
+      cp  "${GALAXY_PATH}/database/universe.sqlite" "${LOCAL_GALAXY_DIRECTORY}/database"
+    fi
+  else
+    echo "Create local galaxy database folder"
+    mkdir -p "${LOCAL_GALAXY_DIRECTORY}/database"
+    echo "copy default galaxy database file"
+    cp  "${GALAXY_PATH}/database/universe.sqlite" "${LOCAL_GALAXY_DIRECTORY}/database"
+  fi
+  
+  MOUNT="/node/${HOSTNAME}/8080=galaxy.webapps.galaxy.buildapp:uwsgi_app()"
+  COOKIE_PATH="/node/${HOSTNAME}/8080"
+  DATABASE="sqlite:///${HOME}/.galaxy/database/universe.sqlite?isolation_level=IMMEDIATE"
+  EMAIL="${USER}@osc.edu"
+  sed -i -e"s/^\s*mount:.*/  mount: $(echo $MOUNT | sed -e 's/[\/&]/\\&/g')/"  "${GALAXY_PATH}/config/galaxy.yml"
+  sed -i -e"s/^\s*cookie_path:.*/  cookie_path: $(echo $COOKIE_PATH | sed -e 's/[\/&]/\\&/g')/"  "${GALAXY_PATH}/config/galaxy.yml"
+  sed -i -e"s/^\s*database_connection:.*/  database_connection: $(echo $DATABASE | sed -e 's/[\/&]/\\&/g')/"  "${GALAXY_PATH}/config/galaxy.yml"
+  sed -i -e"s/^\s*single_user:.*/  single_user: $(echo $EMAIL | sed -e 's/[\/&]/\\&/g')/"  "${GALAXY_PATH}/config/galaxy.yml"
+}
+setup_env
+
+#
+# Start Galaxy
+#
+# Launch the Galaxy
+if [[ -z "${GALAXY_PATH}" ]]; then
+  GALAXY_PATH="${HOME}/ondemand/dev/bc_osc_galaxy/galaxy"
+fi
+echo "Starting up Galaxy..."
+sh ${GALAXY_PATH}/run.sh
+# Wait for the Galaxy Server to start
+echo "Waiting for Galaxy Server to open port ${port}..."
+if wait_until_port_used "${host}:${port}" 120; then
+  echo "Discovered Galaxy Server listening on port ${port}!"
+else
+  echo "Timed out waiting for Galaxy Server to open port ${port}!"
+  clean_up 1
+fi
+sleep 2

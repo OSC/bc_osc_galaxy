@@ -1,0 +1,9 @@
+# Wait for the Galaxy Server to start
+echo "Waiting for Galaxy Server to open port ${port}..."
+if wait_until_port_used "${hostname}:${port}" 120; then
+  echo "Discovered Galaxy listening on port ${port}!"
+else
+  echo "Timed out waiting for Galaxy Server to open port ${port}!"
+  clean_up 1
+fi
+sleep 2
