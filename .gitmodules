@@ -1,3 +1,3 @@
 [submodule "galaxy"]
 	path = galaxy
-	url = git@github.com:galaxyproject/galaxy.git
+	url = git@github.com:OSC/galaxy.git

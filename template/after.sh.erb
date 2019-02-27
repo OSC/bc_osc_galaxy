@@ -1,9 +1,34 @@
+#!/bin/sh
+
 # Wait for the Galaxy Server to start
-echo "Waiting for Galaxy Server to open port ${port}..."
-if wait_until_port_used "${hostname}:${port}" 120; then
-  echo "Discovered Galaxy listening on port ${port}!"
+echo "Waiting for Galaxy Server running"
+wait_until_server_runing () {
+  local time=${1:-30}
+  echo time
+  for ((i=1; i<=time*2; i++)); do
+    echo "GALAXY_IS_RUNNING = ${GALAXY_IS_RUNNING}"
+    if [[ -z "${GALAXY_IS_RUNNING}" ]] && [ "$GALAXY_IS_RUNNING" = true ]; then
+      return 0
+    fi
+    sleep 0.5
+  done
+  return 1
+}
+
+# if wait_until_server_runing 120; then
+#  echo "Discovered Galaxy listening on port ${port}!"
+# else
+#  echo "Timed out waiting for Galaxy Server to open port ${port}!"
+#  clean_up 1
+# fi
+# sleep 2
+
+# Wait for the RStudio Server to start
+echo "Waiting for RStudio Server to open port ${port}..."
+if wait_until_port_used "${host}:${port}" 120; then
+  echo "Discovered RStudio Server listening on port ${port}!"
 else
-  echo "Timed out waiting for Galaxy Server to open port ${port}!"
+  echo "Timed out waiting for RStudio Server to open port ${port}!"
   clean_up 1
 fi
 sleep 2
