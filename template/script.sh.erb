@@ -4,7 +4,7 @@
 setup_env () {
   # Define Path fot Galaxy
   if [[ -z "${GALAXY_PATH}" ]]; then
-    GALAXY_PATH="${HOME}/ondemand/dev/bc-osc-galaxy/galaxy"
+    GALAXY_PATH="${HOME}/ondemand/dev/bc_osc_galaxy/galaxy"
   fi
   echo "GALAXY_PATH is: '${GALAXY_PATH}'"
   LOCAL_GALAXY_DIRECTORY="${HOME}/.galaxy"
@@ -39,7 +39,7 @@ setup_env
 #
 # Launch the Galaxy
 if [[ -z "${GALAXY_PATH}" ]]; then
-  GALAXY_PATH="${HOME}/ondemand/dev/bc-osc-galaxy/galaxy"
+  GALAXY_PATH="${HOME}/ondemand/dev/bc_osc_galaxy/galaxy"
 fi
 echo "Starting up Galaxy..."
 sh ${GALAXY_PATH}/run.sh
