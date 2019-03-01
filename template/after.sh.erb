@@ -25,7 +25,7 @@ wait_until_server_runing () {
 
 # Wait for the Galaxy Server to start
 echo "Waiting for Galaxy Server to open port ${port}..."
-if wait_until_port_used "${host}:${port}" 240; then
+if wait_until_port_used "${host}:${port}" 2400; then
   echo "Discovered Galaxy Server listening on port ${port}!"
 else
   echo "Timed out waiting for Galaxy Server to open port ${port}!"

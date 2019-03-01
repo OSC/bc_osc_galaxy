@@ -33,10 +33,11 @@ scl enable git19 -- git submodule init
 scl enable git19 -- git submodule update
 ```
 
-Install dependencies required by Galaxy:
+Create database and install dependencies required by Galaxy:
 
 ```sh
-sh install_dependencies.sh
+cd galaxy
+sh create_db.sh
 ```
 
 You will not need to do anything beyond this as all necessary assets are
