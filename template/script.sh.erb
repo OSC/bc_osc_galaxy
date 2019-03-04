@@ -1,6 +1,14 @@
 #!/usr/bin/env bash
 # Load the required environment
-
+<%-
+  if context.node_type=="hugemem"
+      ppn = 48
+  elsif context.num_cores.blank?
+      ppn = 28
+  else
+      ppn = context.num_cores.to_i
+  end
+-%>
 setup_env () {
   # Define Path fot Galaxy
   if [[ -z "${GALAXY_PATH}" ]]; then
@@ -22,7 +30,7 @@ setup_env () {
     echo "copy default galaxy database file"
     cp  "${GALAXY_PATH}/database/universe.sqlite" "${LOCAL_GALAXY_DIRECTORY}/database"
   fi
-  
+  echo "Number of cores: <%= ppn %>"
   MOUNT="/node/${HOSTNAME}/8080=galaxy.webapps.galaxy.buildapp:uwsgi_app()"
   COOKIE_PATH="/node/${HOSTNAME}/8080"
   DATABASE="sqlite:///${HOME}/.galaxy/database/universe.sqlite?isolation_level=IMMEDIATE"
@@ -31,6 +39,7 @@ setup_env () {
   sed -i -e"s/^\s*cookie_path:.*/  cookie_path: $(echo $COOKIE_PATH | sed -e 's/[\/&]/\\&/g')/"  "${GALAXY_PATH}/config/galaxy.yml"
   sed -i -e"s/^\s*database_connection:.*/  database_connection: $(echo $DATABASE | sed -e 's/[\/&]/\\&/g')/"  "${GALAXY_PATH}/config/galaxy.yml"
   sed -i -e"s/^\s*single_user:.*/  single_user: $(echo $EMAIL | sed -e 's/[\/&]/\\&/g')/"  "${GALAXY_PATH}/config/galaxy.yml"
+  sed -i.bak 's/\(ppn=\).*/\1<%= ppn %><\/param>/' "${GALAXY_PATH}/config/job_conf.xml"
 }
 setup_env
 
