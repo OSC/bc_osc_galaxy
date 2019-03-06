@@ -11,7 +11,7 @@ OnDemand node):
 
 - [Lmod] 6.0.1+ or any other `module restore` and `module load <modules>` based
   CLI used to load appropriate environments within the batch job before
-  launching the RStudio Server.
+  launching Galaxy.
 
 [Lmod]: https://www.tacc.utexas.edu/research-development/tacc-projects/lmod
 
@@ -56,7 +56,7 @@ Again, you do not need to restart the app as it isn't a Passenger app.
 
 ## Contributing
 
-1. Fork it ( https://github.com/OSC/bc_osc_rstudio_server/fork )
+1. Fork it ( https://github.com/OSC/bc_osc_galaxy/fork )
 2. Create your feature branch (`git checkout -b my-new-feature`)
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)

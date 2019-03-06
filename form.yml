@@ -41,6 +41,6 @@ attributes:
   version:
     widget: select
     label: "Galaxy  version"
-    help: "This defines the version of R you want to load."
+    help: "This defines the version of Galaxy you want to load."
     options:
       - [ "18.05"]
