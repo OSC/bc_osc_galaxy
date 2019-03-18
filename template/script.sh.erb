@@ -38,6 +38,8 @@ setup_env () {
   sed -i -e"s/^\s*mount:.*/  mount: $(echo $MOUNT | sed -e 's/[\/&]/\\&/g')/"  "${GALAXY_PATH}/config/galaxy.yml"
   sed -i -e"s/^\s*cookie_path:.*/  cookie_path: $(echo $COOKIE_PATH | sed -e 's/[\/&]/\\&/g')/"  "${GALAXY_PATH}/config/galaxy.yml"
   sed -i -e"s/^\s*database_connection:.*/  database_connection: $(echo $DATABASE | sed -e 's/[\/&]/\\&/g')/"  "${GALAXY_PATH}/config/galaxy.yml"
+  sed -i -e"s/^\s*file_path:.*/  file_path: $(echo ${GALAXY_PATH}/database/files | sed -e 's/[\/&]/\\&/g')/"  "${GALAXY_PATH}/config/galaxy.yml"
+  sed -i -e"s/^\s*new_file_path:.*/  new_file_path: $(echo ${GALAXY_PATH}/database/tmp | sed -e 's/[\/&]/\\&/g')/"  "${GALAXY_PATH}/config/galaxy.yml"
   sed -i -e"s/^\s*single_user:.*/  single_user: $(echo $EMAIL | sed -e 's/[\/&]/\\&/g')/"  "${GALAXY_PATH}/config/galaxy.yml"
   sed -i.bak 's/\(ppn=\).*/\1<%= ppn %><\/param>/' "${GALAXY_PATH}/config/job_conf.xml"
 }

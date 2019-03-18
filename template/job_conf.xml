@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!-- A sample job config that explicitly configures job running the way it is configured by default (if there is no explicit config). -->
+<job_conf>
+    <plugins>
+        <plugin id="pbs" type="runner" load="galaxy.jobs.runners.pbs:PBSJobRunner"/>
+    </plugins>
+    <destinations default="pbs_default">
+        <destination id="pbs_default" runner="pbs">
+            <param id="Resource_List">walltime=5:00:00,nodes=1:ppn=1</param>
+            <param id="-p">128</param>
+            <param id="Output_Path"></param>
+        </destination>
+        <destination id="other_cluster" runner="pbs">
+            <param id="destination">@other.cluster</param>
+        </destination>
+        <destination id="long_jobs" runner="pbs">
+            <param id="Resource_List">walltime=5:00:00,nodes=1:ppn=1</param>
+            <param id="-p">128</param>
+            <param id="Output_Path"></param>
+        </destination>
+    </destinations>
+</job_conf>
