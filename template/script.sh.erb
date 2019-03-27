@@ -21,23 +21,23 @@ setup_env () {
     export GALAXY_CONFIG_FILE="${TEMPLATE_PATH}/galaxy.yml"
   fi
   echo "GALAXY_PATH is: '${GALAXY_PATH}'"
-  echo "GALAXY_PATH is: '${GALAXY_PATH}'"
+  echo "GALAXY_CONFIG_FILE is: '${GALAXY_CONFIG_FILE}'"
   
   LOCAL_GALAXY_DIRECTORY="${HOME}/.galaxy"
   echo "LOCAL_GALAXY_DIRECTORY is: '${LOCAL_GALAXY_DIRECTORY}'"
-#  if [ -d "$LOCAL_GALAXY_DIRECTORY" ]; then
-#    if [ -s "${LOCAL_GALAXY_DIRECTORY}/database/universe.sqlite" ]; then
-#      echo "Use local sqlite file"
-#    else
-#      echo "copy default galaxy database file"
-#      cp  "${GALAXY_PATH}/database/universe.sqlite" "${LOCAL_GALAXY_DIRECTORY}/database"
-#    fi
-#  else
-#    echo "Create local galaxy database folder"
-#    mkdir -p "${LOCAL_GALAXY_DIRECTORY}/database"
-#    echo "copy default galaxy database file"
-#    cp  "${GALAXY_PATH}/database/universe.sqlite" "${LOCAL_GALAXY_DIRECTORY}/database"
-#  fi
+  if [ -d "$LOCAL_GALAXY_DIRECTORY" ]; then
+    if [ -s "${LOCAL_GALAXY_DIRECTORY}/database/universe.sqlite" ]; then
+      echo "Use local sqlite file"
+    else
+      echo "Copy default galaxy database file"
+      cp  "${GALAXY_PATH}/database/universe.sqlite" "${LOCAL_GALAXY_DIRECTORY}/database"
+    fi
+  else
+    echo "Create local galaxy database folder"
+    mkdir -p "${LOCAL_GALAXY_DIRECTORY}/database"
+    echo "copy default galaxy database file"
+    cp  "${GALAXY_PATH}/database/universe.sqlite" "${LOCAL_GALAXY_DIRECTORY}/database"
+  fi
   
   echo "Number of cores: <%= ppn %>"
   MOUNT="/node/${HOSTNAME}/8080=galaxy.webapps.galaxy.buildapp:uwsgi_app()"
@@ -45,15 +45,19 @@ setup_env () {
   DATABASE="sqlite:///${HOME}/.galaxy/database/universe.sqlite?isolation_level=IMMEDIATE"
   EMAIL="${USER}@osc.edu"
   JOB_CONFIG_FILE_PATH="${TEMPLATE_PATH}/job_conf.xml"
+  OUTPUT_PATH="<param id='Output_Path'>${TEMPLATE_PATH}/output</param>"
   
   sed -i -e"s/^\s*mount:.*/  mount: $(echo $MOUNT | sed -e 's/[\/&]/\\&/g')/"  "${TEMPLATE_PATH}/galaxy.yml"
   sed -i -e"s/^\s*cookie_path:.*/  cookie_path: $(echo $COOKIE_PATH | sed -e 's/[\/&]/\\&/g')/"  "${TEMPLATE_PATH}/galaxy.yml"
   sed -i -e"s/^\s*database_connection:.*/  database_connection: $(echo $DATABASE | sed -e 's/[\/&]/\\&/g')/"  "${TEMPLATE_PATH}/galaxy.yml"
-  sed -i -e"s/^\s*file_path:.*/  file_path: $(echo ${GALAXY_PATH}/database/files | sed -e 's/[\/&]/\\&/g')/"  "${TEMPLATE_PATH}/galaxy.yml"
-  sed -i -e"s/^\s*new_file_path:.*/  new_file_path: $(echo ${GALAXY_PATH}/database/tmp | sed -e 's/[\/&]/\\&/g')/"  "${TEMPLATE_PATH}/galaxy.yml"
+  sed -i -e"s/^\s*file_path:.*/  file_path: $(echo ${LOCAL_GALAXY_DIRECTORY}/database/files | sed -e 's/[\/&]/\\&/g')/"  "${TEMPLATE_PATH}/galaxy.yml"
+  sed -i -e"s/^\s*new_file_path:.*/  new_file_path: $(echo ${LOCAL_GALAXY_DIRECTORY}/database/tmp | sed -e 's/[\/&]/\\&/g')/"  "${TEMPLATE_PATH}/galaxy.yml"
   sed -i -e"s/^\s*single_user:.*/  single_user: $(echo $EMAIL | sed -e 's/[\/&]/\\&/g')/"  "${TEMPLATE_PATH}/galaxy.yml"
   sed -i -e"s/^\s*job_config_file:.*/  job_config_file: $(echo $JOB_CONFIG_FILE_PATH | sed -e 's/[\/&]/\\&/g')/"  "${TEMPLATE_PATH}/galaxy.yml"
-  sed -i.bak 's/\(ppn=\).*/\1<%= ppn %><\/param>/' "${JOB_CONFIG_FILE_PATH}"
+  sed -i -e"s/^\s*cluster_files_directory:.*/  cluster_files_directory: $(echo ${LOCAL_GALAXY_DIRECTORY}/database/pbs | sed -e 's/[\/&]/\\&/g')/"  "${TEMPLATE_PATH}/galaxy.yml"
+  sed -i.bak 's/\(ppn=\).*/\11<\/param>/' "${JOB_CONFIG_FILE_PATH}"
+  sed -i -e"s/outputpath/$(echo $OUTPUT_PATH | sed -e 's/[\/&]/\\&/g')/"  "${JOB_CONFIG_FILE_PATH}" 
+  sed -i -e"s/^.*Output_Path.*/            $(echo $OUTPUT_PATH | sed -e 's/[\/&]/\\&/g')/"  "${JOB_CONFIG_FILE_PATH}"
 }
 setup_env
 

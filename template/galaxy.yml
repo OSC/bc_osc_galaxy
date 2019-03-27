@@ -443,7 +443,7 @@ galaxy:
 
   # If using a cluster, Galaxy will write job scripts and stdout/stderr
   # to this directory.
-  #cluster_files_directory: database/pbs
+  cluster_files_directory: 
 
   # Mako templates are compiled as needed and cached for reuse, this
   # directory is used for the cache

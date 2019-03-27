@@ -37,7 +37,8 @@ Create database and install dependencies required by Galaxy:
 
 ```sh
 cd galaxy
-sh create_db.sh
+scl enable python27 -- sh install_dependencies.sh 
+scl enable python27 -- sh create_db.sh
 ```
 
 You will not need to do anything beyond this as all necessary assets are
