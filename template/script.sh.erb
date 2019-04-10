@@ -13,7 +13,7 @@
 setup_env () {
   # Define Path for Galaxy
   if [[ -z "${GALAXY_PATH}" ]]; then
-    GALAXY_PATH="${HOME}/ondemand/dev/bc_osc_galaxy/galaxy"
+    GALAXY_PATH="<%= BatchConnect::App.from_token(session.token).root.realpath.join("galaxy").to_s %>"
   fi
   # Define Path for Galaxy.yml
   TEMPLATE_PATH=$(dirname "$0")
