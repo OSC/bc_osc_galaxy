@@ -17,28 +17,30 @@ OnDemand node):
 
 ## Install
 
+The Install process runs on the **login node**
+
 Use git to clone this app and checkout the desired branch/version you want to
 use:
 
 ```sh
-scl enable git19 -- git clone <repo>
+git clone <repo>
 cd <dir>
-scl enable git19 -- git checkout <tag/branch>
+git checkout <tag/branch>
 ```
 
 Use git to initialize and clone submodule Galaxy:
 
 ```sh
-scl enable git19 -- git submodule init
-scl enable git19 -- git submodule update
+git submodule init
+git submodule update
 ```
 
 Create database and install dependencies required by Galaxy:
 
 ```sh
 cd galaxy
-scl enable python27 -- sh install_dependencies.sh 
-scl enable python27 -- sh create_db.sh
+sh install_dependencies.sh 
+sh create_db.sh
 ```
 
 You will not need to do anything beyond this as all necessary assets are
@@ -49,8 +51,8 @@ To update the app you would:
 
 ```sh
 cd <dir>
-scl enable git19 -- git fetch
-scl enable git19 -- git checkout <tag/branch>
+git fetch
+git checkout <tag/branch>
 ```
 
 Again, you do not need to restart the app as it isn't a Passenger app.
