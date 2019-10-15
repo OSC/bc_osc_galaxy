@@ -1,7 +1,6 @@
 ---
 cluster: "owens"
 form:
-  - version
   - bc_account
   - bc_num_hours
   - node_type
@@ -38,9 +37,3 @@ attributes:
       - [ "any",     "any"     ]
       - [ "hugemem", "hugemem" ]
       - [ "debug",   "debug"   ]
-  version:
-    widget: select
-    label: "Galaxy  version"
-    help: "This defines the version of Galaxy you want to load."
-    options:
-      - [ "18.05"]

@@ -4,7 +4,7 @@ category: Interactive Apps
 subcategory: Servers
 role: batch_connect
 description: |
-  This app will launch [Galaxy] on the [Owens cluster].
+  This app will launch [Galaxy 19.09] on the [Owens cluster].
 
   [Galaxy]: https://galaxyproject.org/
   [Owens cluster]: https://www.osc.edu/resources/technical_support/supercomputers/owens
