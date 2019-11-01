@@ -6,5 +6,5 @@ role: batch_connect
 description: |
   This app will launch [Galaxy 19.09] on the [Owens cluster].
 
-  [Galaxy]: https://galaxyproject.org/
+  [Galaxy 19.09]: https://galaxyproject.org/
   [Owens cluster]: https://www.osc.edu/resources/technical_support/supercomputers/owens
