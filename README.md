@@ -58,6 +58,8 @@ Again, you do not need to restart the app as it isn't a Passenger app.
 
 ## Developer Notes
 
+See the inline comments on PR https://github.com/OSC/bc_osc_galaxy/pull/7 for more information. The main PR topic description was copied below.
+
 ### Overview
 Galaxy interface app runs on Owens. The users can install, manage and run tools and workflows.
 
