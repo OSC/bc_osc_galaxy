@@ -1,11 +1,11 @@
 ---
 cluster: "owens"
 form:
-  - version
   - bc_account
   - bc_num_hours
   - node_type
   - num_cores
+  - job_runner
   - bc_email_on_started
 attributes:
   num_cores:
@@ -38,9 +38,17 @@ attributes:
       - [ "any",     "any"     ]
       - [ "hugemem", "hugemem" ]
       - [ "debug",   "debug"   ]
-  version:
+  job_runner:
     widget: select
-    label: "Galaxy  version"
-    help: "This defines the version of Galaxy you want to load."
+    label: "Galaxy tool runner"
+    help: |
+      - **local** - When running tools locally, they are child processes of the Galaxy server. 
+        The maximum number of concurrent jobs is the number of cores.
+        When session ends, you lose contact with those jobs still running, 
+        and they must be restarted.
+      - **cluster** - When running tools in a cluster, they are separate processes from the Galaxy server.
+        They are jobs submitted to Owens Cluster as configured above and there is no maximum number of concurrent jobs. 
+        When session ends, the jobs will continue to run and finish.
     options:
-      - [ "18.05"]
+      - [ "local",     "local"]
+      - [ "cluster", "pbs" ]

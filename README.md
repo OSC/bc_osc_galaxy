@@ -28,19 +28,10 @@ cd <dir>
 git checkout <tag/branch>
 ```
 
-Use git to initialize and clone submodule Galaxy:
+Install Galaxy and dependencies
 
 ```sh
-git submodule init
-git submodule update
-```
-
-Create database and install dependencies required by Galaxy:
-
-```sh
-cd galaxy
-sh install_dependencies.sh 
-sh create_db.sh
+sh install-galaxy.sh
 ```
 
 You will not need to do anything beyond this as all necessary assets are

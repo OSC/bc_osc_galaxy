@@ -4,3 +4,129 @@
 # Find available port to run server on
 port=8080
 
+# Define Galaxy Variables
+export GALAXY_PATH="<%= BatchConnect::App.from_token(session.token).root.realpath.join("galaxy").to_s %>"
+export GALAXY_CONFIG_FILE="${PWD}/galaxy.yml"
+MOUNT="/node/${HOSTNAME}/8080=galaxy.webapps.galaxy.buildapp:uwsgi_app()"
+DATAROOT=${HOME}/.galaxy
+EMAIL="${USER}@osc.edu"
+export JOB_CONFIG_FILE_PATH="${PWD}/job_conf.xml"
+export JOB_RESOURCE_PARAMS_CONF_FILE_PATH="${PWD}/job_resource_params_conf.xml"
+export WORKFLOW_RESOURCE_PARAMS_CONF_FILE_PATH="${PWD}/workflow_resource_params_conf.xml"
+
+echo "GALAXY location: '${GALAXY_PATH}'"
+echo "Data location: '${DATAROOT}'"
+
+# Load the required environment
+<%-
+  if context.node_type=="hugemem"
+      ppn = 48
+  elsif context.num_cores.blank?
+      ppn = 28
+  else
+      ppn = context.num_cores.to_i
+  end
+-%>
+
+# Generate Galaxy job configuration file
+(
+umask 077
+cat > "${JOB_CONFIG_FILE_PATH}" << EOL
+<?xml version="1.0"?>
+<!-- A sample job config that explicitly configures job running the way it is configured by default (if there is no explicit config). -->
+<job_conf>
+    <resources>
+        <group id="basic">cores,time</group>
+    </resources>
+    <tools>
+        <tool id="bed2gff1" destination="dynamic_cores_time" resources="basic"/>
+    </tools>
+    <plugins>
+        <plugin id="local" type="runner" load="galaxy.jobs.runners.local:LocalJobRunner"/>
+        <plugin id="pbs" type="runner" load="galaxy.jobs.runners.pbs:PBSJobRunner"/>
+        <plugin id="dynamic" type="runner">
+            <param id="rules_module">galaxy.jobs.rules</param>
+        </plugin>
+    </plugins>
+    <destinations default="<%= context.job_runner %>">
+        <destination id="dynamic_cores_time" runner="dynamic">
+            <param id="type">python</param>
+            <param id="function">dynamic_cores_time</param>
+        </destination>
+        <destination id="pbs" runner="pbs">
+            <param id="Resource_List">walltime=5:00:00,nodes=1:ppn=<%= ppn %></param>
+        </destination>
+        <destination id="local" runner="local">
+            <param id="local_slots"><%= ppn %></param>
+        </destination>
+    </destinations>
+</job_conf>
+EOL
+)
+
+# Generate Galaxy job resource parameter configuration file
+(
+umask 077
+cat > "${JOB_RESOURCE_PARAMS_CONF_FILE_PATH}" << EOL
+<parameters>
+  <param label="Cores" name="cores" type="integer" min="1" max="28" value="1" help="Number of processing cores, 'ppn' value (1-28). Leave blank to use default value." />
+  <param label="Walltime" name="time" type="integer" size="3" min="1" max="24" value="1" help="Maximum job time in hours, 'walltime' value (1-24). Leave blank to use default value." />
+</parameters>
+EOL
+)
+
+
+# Generate Galaxy workflow resource parameter configuration file
+(
+umask 077
+cat > "${WORKFLOW_RESOURCE_PARAMS_CONF_FILE_PATH}" << EOL
+<parameters>
+    <param label="Processors" name="processors" type="integer" min="1" max="28" value="" help="Number of processing cores, 'ppn' value (1-28). Leave blank to use default value." />
+    <param label="Memory" name="memory" type="integer" min="1" max="256" value="" help="Memory size in gigabytes, 'pmem' value (1-256). Leave blank to use default value." />
+    <param label="Time" name="time" type="integer" min="1" max="744" value="" help="Maximum job time in hours, 'walltime' value (1-744). Leave blank to use default value." />
+    <param label="Project" name="project" type="text" value="" help="Project to assign resource allocation to. Leave blank to use default value." />
+    <param label="Workflow Job Priority" name="priority" type="select" value="med" help="What priority should the jobs in this workflow run at? (Overrides any declared job priority)">
+        <option value="low" label="Low"/>
+        <option value="med" label="Medium"/>
+        <option value="high" label="High"/>
+        <option value="ultra" label="Ultra"/>
+        <option value="plus_ultra" label="Plus Ultra"/>
+    </param>
+</parameters>
+EOL
+)
+
+# Generate Galaxy configuration file
+(
+umask 077
+cat > "${GALAXY_CONFIG_FILE}" << EOL
+uwsgi:
+  http: 0.0.0.0:8080
+  buffer-size: 16384
+  processes: 1
+  threads: 4
+  offload-threads: 2
+  static-map: /static/style=static/style/blue
+  static-map: /static=static
+  static-map: /favicon.ico=static/favicon.ico
+  master: false
+  virtualenv: .venv
+  pythonpath: lib
+  mount: ${MOUNT}
+  manage-script-name: true
+  thunder-lock: false
+  die-on-term: true
+  hook-master-start: unix_signal:2 gracefully_kill_them_all
+  hook-master-start: unix_signal:15 gracefully_kill_them_all
+  py-call-osafterfork: true
+  enable-threads: true
+galaxy:
+  data_dir: ${DATAROOT}
+  single_user: ${EMAIL}
+  tool_dependency_dir: ${GALAXY_PATH}/database/dependencies
+  job_resource_params_file: ${JOB_RESOURCE_PARAMS_CONF_FILE_PATH}
+  workflow_resource_params_file: ${WORKFLOW_RESOURCE_PARAMS_CONF_FILE_PATH}
+  admin_users: ${EMAIL}
+  job_config_file: ${JOB_CONFIG_FILE_PATH}
+EOL
+)
