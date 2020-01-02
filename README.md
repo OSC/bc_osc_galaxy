@@ -145,12 +145,13 @@ If the user chooses to specify resources:
 
 ## Example: configure dynamic running tools with user-defined resources 
 As an example, I configured BED-to-GFF tool to provide resources selection fields. Steps to configure a tool to use the dynamic runner based on resource parameters selected by the user:
-         1. Specify the parameters in the job resource configuration file (https://github.com/galaxyproject/galaxy/blob/dev/lib/galaxy/config/sample/job_resource_params_conf.xml.sample). The following example contains `cores` and `walltime`. The input field can be an input box or a dropdown with several options.
+
+1. Specify the parameters in the job resource configuration file (https://github.com/galaxyproject/galaxy/blob/dev/lib/galaxy/config/sample/job_resource_params_conf.xml.sample). The following example contains `cores` and `walltime`. The input field can be an input box or a dropdown with several options.
 https://github.com/OSC/bc_osc_galaxy/blob/9afb0b7ec7452261149290cec5fb7d2d00b4c958/template/before.sh.erb#L67-L76
-        2.  Add rules to https://github.com/galaxyproject/galaxy/tree/dev/lib/galaxy/jobs/rules directory to match job resource parameters entered by the user to destinations. The following example matches the default runner to the default destination. If the user enters cores and walltime, we construct a resource list and run the tool with pbs runner. 
+2.  Add rules to https://github.com/galaxyproject/galaxy/tree/dev/lib/galaxy/jobs/rules directory to match job resource parameters entered by the user to destinations. The following example matches the default runner to the default destination. If the user enters cores and walltime, we construct a resource list and run the tool with pbs runner. 
 https://github.com/OSC/bc_osc_galaxy/blob/9afb0b7ec7452261149290cec5fb7d2d00b4c958/install-galaxy.sh#L11-L43
-         3. Add dynamic job runner to the `<plugins>` in job config file. `rules_module` field indicates the location of the files we created at step 2. https://github.com/OSC/bc_osc_galaxy/blob/9afb0b7ec7452261149290cec5fb7d2d00b4c958/template/before.sh.erb#L47-L49
-         4. Inside of `<resources>`  in the job config file, add a group of parameters we defined at step 1 and define the group id. https://github.com/OSC/bc_osc_galaxy/blob/9afb0b7ec7452261149290cec5fb7d2d00b4c958/template/before.sh.erb#L38-L40
-       5.  Inside of `<tools>`  in the job config file, specify the id="tool_id", destination="destination_id" and resource="resource_group_id" https://github.com/OSC/bc_osc_galaxy/blob/9afb0b7ec7452261149290cec5fb7d2d00b4c958/template/before.sh.erb#L41-L43
+3. Add dynamic job runner to the `<plugins>` in job config file. `rules_module` field indicates the location of the files we created at step 2. https://github.com/OSC/bc_osc_galaxy/blob/9afb0b7ec7452261149290cec5fb7d2d00b4c958/template/before.sh.erb#L47-L49
+4. Inside of `<resources>`  in the job config file, add a group of parameters we defined at step 1 and define the group id. https://github.com/OSC/bc_osc_galaxy/blob/9afb0b7ec7452261149290cec5fb7d2d00b4c958/template/before.sh.erb#L38-L40
+5.  Inside of `<tools>`  in the job config file, specify the id="tool_id", destination="destination_id" and resource="resource_group_id" https://github.com/OSC/bc_osc_galaxy/blob/9afb0b7ec7452261149290cec5fb7d2d00b4c958/template/before.sh.erb#L41-L43
 
 Tools are defined under `https://github.com/galaxyproject/galaxy/tree/dev/tools` in the xml files. To find tool id, it's defined in the `<tool>` tag such as `<tool id="createInterval" name="Create single interval" version="1.0.0">`.
