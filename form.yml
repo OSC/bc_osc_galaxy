@@ -28,9 +28,9 @@ attributes:
     help: |
       - **any** - (*1-28 cores*) Use any available Owens node. This reduces the
         wait time as there are no node requirements.
-      - **hugemem** - (*48 cores*) Use an Owens node that has 1.5TB of
+      - **hugemem** - (*4-48 cores*) Use an Owens node that has 1.5TB of
         available RAM as well as 48 cores. There are 16 of these nodes on
-        Owens. Requesting hugemem nodes allocates entire nodes.
+        Owens.
       - **debug** - (*1-28 cores*) For short sessions (= 1 hour) the debug
         queue will have the shortest wait time. This is only accessible during
         8AM - 6PM, Monday - Friday. There are 6 of these nodes on Owens.

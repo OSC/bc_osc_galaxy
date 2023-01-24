@@ -25,7 +25,7 @@ function fix_num_cores() {
 function set_ppn_owens_hugemem(num_cores_input) {
   const NUM_CORES = 48;
   num_cores_input.attr('max', NUM_CORES);
-  num_cores_input.attr('min', NUM_CORES);
+  num_cores_input.attr('min', 4);
   num_cores_input.val(NUM_CORES);
 }
 
